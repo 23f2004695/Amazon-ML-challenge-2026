@@ -1,6 +1,6 @@
 # Amazon ML Challenge 2026 - Business Entity Resolution
 
-My solution for the Amazon ML Challenge 2026, submitted under the team name **DuoML**.
+My solution for the Amazon ML Challenge 2026.
 
 The task was to link business records from three different sources to the same real-world entity. Source 1 is the reference list. Every record in Source 2 and Source 3 has to be linked to the Source 1 entity it belongs to, or left unlinked if it doesn't belong to any. The data is messy: typos, shuffled words, junk prefixes, names written in 9 Indic scripts, abbreviated or half-missing addresses. The test set also includes a country (France) that never appears in training.
 
