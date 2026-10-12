@@ -1,6 +1,6 @@
 # Amazon ML Challenge 2026 - Business Entity Resolution
 
-Our solution for the Amazon ML Challenge 2026 as team **DuoML** (Prabhjot Kaur Batth and Jashan Tiwari).
+Our solution for the Amazon ML Challenge 2026 as team **DuoML**.
 
 The task was to link business records from three different sources to the same real-world entity. Source 1 is the reference list. Every record in Source 2 and Source 3 has to be linked to the Source 1 entity it belongs to, or left unlinked if it doesn't belong to any. The data is messy: typos, shuffled words, junk prefixes, names written in 9 Indic scripts, abbreviated or half-missing addresses. The test set also includes a country (France) that never appears in training.
 
@@ -104,7 +104,6 @@ The full run takes about 7 hours on 16 CPU cores and stays under 16 GB RAM per s
 
 Python 3.11 · Polars · LightGBM · RapidFuzz · Unidecode · NumPy · scikit-learn
 
-## Team
+## Author
 
 - **Prabhjot Kaur Batth** (team lead)
-- **Jashan Tiwari**
