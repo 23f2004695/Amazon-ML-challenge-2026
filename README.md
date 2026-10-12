@@ -1,17 +1,17 @@
 # Amazon ML Challenge 2026 - Business Entity Resolution
 
-Our solution for the Amazon ML Challenge 2026 as team **DuoML**.
+My solution for the Amazon ML Challenge 2026, submitted under the team name **DuoML**.
 
 The task was to link business records from three different sources to the same real-world entity. Source 1 is the reference list. Every record in Source 2 and Source 3 has to be linked to the Source 1 entity it belongs to, or left unlinked if it doesn't belong to any. The data is messy: typos, shuffled words, junk prefixes, names written in 9 Indic scripts, abbreviated or half-missing addresses. The test set also includes a country (France) that never appears in training.
 
-**Final score:** 0.9864 macro F0.5 on our test-like validation setup
+**Final score:** 0.9864 macro F0.5 on my test-like validation setup
 **Leaderboard progression:** 0.961 → 0.975 → 0.977 → 0.978 → 0.979
 
 ---
 
 ## The main idea
 
-Early on we noticed that in the ground truth, every S2/S3 record belongs to **at most one** S1 entity. So instead of clustering everything, we treated it as an assignment problem: for each S2/S3 record, find its single best S1 candidate and decide whether to link it or not.
+Early on I noticed that in the ground truth, every S2/S3 record belongs to **at most one** S1 entity. So instead of clustering everything, I treated it as an assignment problem: for each S2/S3 record, find its single best S1 candidate and decide whether to link it or not.
 
 The pipeline looks like this:
 
@@ -34,17 +34,17 @@ normalize  ──►  blocking (IDF inverted index + re-ranker)  ──►  ~10 
                        decision: best S1 per record, F0.5-tuned threshold, per-S1 caps
 ```
 
-Everything runs on CPU with LightGBM. We didn't use any external data, APIs or pretrained models.
+Everything runs on CPU with LightGBM. I didn't use any external data, APIs or pretrained models.
 
 ## What actually moved the score
 
 Most of the gains came from understanding the data, not from bigger models.
 
-- **Blocking keys built from the noise we saw.** Plain name tokens weren't enough. Adding street-name pairs and name × locality keys raised recall@10 from 93.3% to 97.5%. A small learned re-ranker pushed it to about 98.7% in the final version.
+- **Blocking keys built from the noise I saw.** Plain name tokens weren't enough. Adding street-name pairs and name × locality keys raised recall@10 from 93.3% to 97.5%. A small learned re-ranker pushed it to about 98.7% in the final version.
 - **Letting linked siblings vouch for a record.** Records of the same business inside one source often share the exact same address string, even when the name has been swapped for something unrelated. Stage 2 asks: do the records already confidently linked to this S1 look like this one?
-- **Simulating the test distribution.** Our first leaderboard score (0.961) was way below our OOF score (0.973). Test has ~23% more S2/S3 records per S1, which means more "orphan" records with no true match. We reproduced that on train by withholding 18% of S1 entities (`make_drop.py`), then trained and tuned everything on that simulation.
-- **Decoy detection (+0.010, the biggest single jump).** The data has sister businesses on the same street with an extra word ("Holdings", "Group", "Exports") and a nearby house number. We added house-number relation features (equal vs. close vs. typo vs. truncated) and a learned dictionary of which added words point to decoys and which are just noise.
-- **France without labels.** We estimated a French decoy vocabulary without any labels by using the house-number mismatch rate as a proxy. We also fixed dotted legal forms like "S.A.R.L." and handled French names that contain the city name ("Lille Club" vs "Lille Comite").
+- **Simulating the test distribution.** My first leaderboard score (0.961) was way below my OOF score (0.973). Test has ~23% more S2/S3 records per S1, which means more "orphan" records with no true match. I reproduced that on train by withholding 18% of S1 entities (`make_drop.py`), then trained and tuned everything on that simulation.
+- **Decoy detection (+0.010, the biggest single jump).** The data has sister businesses on the same street with an extra word ("Holdings", "Group", "Exports") and a nearby house number. I added house-number relation features (equal vs. close vs. typo vs. truncated) and a learned dictionary of which added words point to decoys and which are just noise.
+- **France without labels.** I estimated a French decoy vocabulary without any labels by using the house-number mismatch rate as a proxy. I also fixed dotted legal forms like "S.A.R.L." and handled French names that contain the city name ("Lille Club" vs "Lille Comite").
 - **Numbered streets.** "309 18th Street" and "309 5th Street" were collapsing to the same thing in normalization. Fixing that and rerunning the whole chain gave the last bit of improvement.
 
 The full write-up, with every experiment, feature list, ablation and error analysis, is in [`docs/solution_writeup.md`](docs/solution_writeup.md).
