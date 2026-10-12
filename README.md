@@ -103,7 +103,3 @@ The full run takes about 7 hours on 16 CPU cores and stays under 16 GB RAM per s
 ## Tech
 
 Python 3.11 · Polars · LightGBM · RapidFuzz · Unidecode · NumPy · scikit-learn
-
-## Author
-
-- **Prabhjot Kaur Batth** (team lead)
